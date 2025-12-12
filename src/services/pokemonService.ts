@@ -43,4 +43,30 @@ export const pokemonService = {
       cry: data.cries.latest,
     }
   },
+
+  async getEvolutionChain(id: number): Promise<EvolutionPokemon[]> {
+    const { data: species } = await api.get(`/pokemon-species/${id}`)
+    const { data: evolution } = await api.get(species.evolution_chain.url)
+
+    const chain: EvolutionPokemon[] = []
+    let current = evolution.chain
+
+    while (current) {
+      const pokemonId = parseInt(current.species.url.split('/').slice(-2, -1)[0])
+      chain.push({
+        id: pokemonId,
+        name: current.species.name,
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+      })
+      current = current.evolves_to[0]
+    }
+
+    return chain
+  },
+}
+
+export interface EvolutionPokemon {
+  id: number
+  name: string
+  image: string
 }
