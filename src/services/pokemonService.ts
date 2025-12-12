@@ -1,5 +1,14 @@
 import api from './api'
-import type { PokemonListResponse, Pokemon, PokemonDetailResponse } from '@/types/pokemon'
+import type {
+  PokemonListResponse,
+  Pokemon,
+  PokemonDetailResponse,
+  EvolutionPokemon,
+} from '@/types/pokemon'
+
+function getPokemonImageUrl(id: number): string {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+}
 
 export const pokemonService = {
   async getList(limit = 25, offset = 0): Promise<{ items: Pokemon[]; count: number }> {
@@ -13,7 +22,7 @@ export const pokemonService = {
       return {
         id: detail.id,
         name: detail.name,
-        image: detail.sprites.other['official-artwork'].front_default,
+        image: getPokemonImageUrl(detail.id),
         types: detail.types.map((t) => t.type.name),
       }
     })
@@ -32,7 +41,7 @@ export const pokemonService = {
     return {
       id: data.id,
       name: data.name,
-      image: data.sprites.other['official-artwork'].front_default,
+      image: getPokemonImageUrl(data.id),
       types: data.types.map((t) => t.type.name),
       height: data.height,
       weight: data.weight,
@@ -56,17 +65,11 @@ export const pokemonService = {
       chain.push({
         id: pokemonId,
         name: current.species.name,
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+        image: getPokemonImageUrl(pokemonId),
       })
       current = current.evolves_to[0]
     }
 
     return chain
   },
-}
-
-export interface EvolutionPokemon {
-  id: number
-  name: string
-  image: string
 }

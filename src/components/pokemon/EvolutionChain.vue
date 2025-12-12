@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EvolutionPokemon } from '@/services/pokemonService'
+import type { EvolutionPokemon } from '@/types/pokemon'
 
 interface Props {
   chain: EvolutionPokemon[]

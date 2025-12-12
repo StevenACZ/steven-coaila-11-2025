@@ -55,3 +55,9 @@ export interface PokemonStat {
   name: string
   value: number
 }
+
+export interface EvolutionPokemon {
+  id: number
+  name: string
+  image: string
+}
