@@ -16,18 +16,14 @@ export const pokemonService = {
       params: { limit, offset },
     })
 
-    const promises = data.results.map(async (item) => {
-      const { data: detail } = await api.get<PokemonDetailResponse>(item.url)
-
+    const items = data.results.map((item) => {
+      const id = parseInt(item.url.split('/').slice(-2, -1)[0] || '0')
       return {
-        id: detail.id,
-        name: detail.name,
-        image: getPokemonImageUrl(detail.id),
-        types: detail.types.map((t) => t.type.name),
+        id,
+        name: item.name,
+        image: getPokemonImageUrl(id),
       }
     })
-
-    const items = await Promise.all(promises)
 
     return {
       items,

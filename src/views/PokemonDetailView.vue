@@ -68,7 +68,7 @@ onMounted(loadPokemon)
         <div class="detail__info">
           <span class="detail__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
           <h1 class="detail__name">{{ pokemon.name }}</h1>
-          <PokemonTypes :types="pokemon.types" />
+          <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
         </div>
       </div>
 
