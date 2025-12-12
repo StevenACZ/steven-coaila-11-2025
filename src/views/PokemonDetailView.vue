@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useTeam } from '@/composables/useTeam'
-import { usePokemonStore } from '@/stores/pokemonStore'
-import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
+import { usePokemonDetail } from '@/composables/usePokemonDetail'
 import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
 import PokemonStats from '@/components/pokemon/PokemonStats.vue'
 import PokemonCry from '@/components/pokemon/PokemonCry.vue'
@@ -11,47 +9,10 @@ import EvolutionChain from '@/components/pokemon/EvolutionChain.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const route = useRoute()
-const { isInTeam } = useTeam()
-const pokemonStore = usePokemonStore()
-
-const pokemon = ref<Pokemon | null>(null)
-const evolutionChain = ref<EvolutionPokemon[]>([])
-const loading = ref(false)
-const error = ref<string | null>(null)
-
 const pokemonId = Number(route.params.id)
 
-async function loadPokemon() {
-  loading.value = true
-  error.value = null
-
-  try {
-    const [pokemonData, speciesData] = await Promise.all([
-      pokemonStore.getById(pokemonId),
-      pokemonStore.getSpeciesData(pokemonId),
-    ])
-
-    if (!isInTeam(pokemonId)) {
-      error.value = 'Este Pokémon no está en tu equipo'
-      return
-    }
-
-    pokemon.value = { ...pokemonData, description: speciesData.description }
-    evolutionChain.value = speciesData.evolutionChain
-  } catch {
-    error.value = 'Error al cargar el Pokémon'
-  } finally {
-    loading.value = false
-  }
-}
-
-function formatHeight(height: number): string {
-  return `${(height / 10).toFixed(1)} m`
-}
-
-function formatWeight(weight: number): string {
-  return `${(weight / 10).toFixed(1)} kg`
-}
+const { pokemon, evolutionChain, loading, error, loadPokemon, formatHeight, formatWeight } =
+  usePokemonDetail(pokemonId)
 
 onMounted(loadPokemon)
 </script>
