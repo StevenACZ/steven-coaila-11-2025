@@ -49,9 +49,16 @@ export interface Pokemon {
   weight?: number
   stats?: PokemonStat[]
   cry?: string
+  description?: string
 }
 
 export interface PokemonStat {
   name: string
   value: number
+}
+
+export interface EvolutionPokemon {
+  id: number
+  name: string
+  image: string
 }

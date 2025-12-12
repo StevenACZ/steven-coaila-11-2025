@@ -83,7 +83,7 @@ onMounted(loadTeam)
   margin: 0 auto;
 
   @media (max-width: 767px) {
-    padding: 16px;
+    padding: 16px 16px 100px 16px;
   }
 
   &__title {
