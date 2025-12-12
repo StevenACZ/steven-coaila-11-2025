@@ -28,15 +28,9 @@ export const usePokemonStore = defineStore('pokemon', () => {
     return data
   }
 
-  function clearCache() {
-    cache.value.clear()
-    speciesCache.value.clear()
-  }
-
   return {
     cache,
     getById,
     getSpeciesData,
-    clearCache,
   }
 })
