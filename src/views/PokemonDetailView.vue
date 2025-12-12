@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useTeam } from '@/composables/useTeam'
-import { pokemonService } from '@/services/pokemonService'
-import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
+import { usePokemonDetail } from '@/composables/usePokemonDetail'
 import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
 import PokemonStats from '@/components/pokemon/PokemonStats.vue'
 import PokemonCry from '@/components/pokemon/PokemonCry.vue'
@@ -11,46 +9,10 @@ import EvolutionChain from '@/components/pokemon/EvolutionChain.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const route = useRoute()
-const { isInTeam } = useTeam()
-
-const pokemon = ref<Pokemon | null>(null)
-const evolutionChain = ref<EvolutionPokemon[]>([])
-const loading = ref(false)
-const error = ref<string | null>(null)
-
 const pokemonId = Number(route.params.id)
 
-async function loadPokemon() {
-  loading.value = true
-  error.value = null
-
-  try {
-    const [pokemonData, speciesData] = await Promise.all([
-      pokemonService.getById(pokemonId),
-      pokemonService.getSpeciesData(pokemonId),
-    ])
-
-    if (!isInTeam(pokemonId)) {
-      error.value = 'Este Pokémon no está en tu equipo'
-      return
-    }
-
-    pokemon.value = { ...pokemonData, description: speciesData.description }
-    evolutionChain.value = speciesData.evolutionChain
-  } catch {
-    error.value = 'Error al cargar el Pokémon'
-  } finally {
-    loading.value = false
-  }
-}
-
-function formatHeight(height: number): string {
-  return `${(height / 10).toFixed(1)} m`
-}
-
-function formatWeight(weight: number): string {
-  return `${(weight / 10).toFixed(1)} kg`
-}
+const { pokemon, evolutionChain, loading, error, loadPokemon, formatHeight, formatWeight } =
+  usePokemonDetail(pokemonId)
 
 onMounted(loadPokemon)
 </script>
@@ -67,7 +29,7 @@ onMounted(loadPokemon)
         <div class="detail__info">
           <span class="detail__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
           <h1 class="detail__name">{{ pokemon.name }}</h1>
-          <PokemonTypes :types="pokemon.types" />
+          <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
         </div>
       </div>
 

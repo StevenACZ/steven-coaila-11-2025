@@ -1,42 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTeam } from '@/composables/useTeam'
-import { pokemonService } from '@/services/pokemonService'
-import type { Pokemon } from '@/types/pokemon'
+import { useTeamPokemon } from '@/composables/useTeamPokemon'
 import PokemonTeamCard from '@/components/pokemon/PokemonTeamCard.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const router = useRouter()
-const { pokemonIds, isEmpty, removeFromTeam } = useTeam()
-
-const teamPokemon = ref<Pokemon[]>([])
-const loading = ref(false)
-const error = ref<string | null>(null)
-
-const hasTeam = computed(() => teamPokemon.value.length > 0)
-
-async function loadTeam() {
-  if (pokemonIds.value.length === 0) return
-
-  loading.value = true
-  error.value = null
-
-  try {
-    const promises = pokemonIds.value.map((id) => pokemonService.getById(id))
-    teamPokemon.value = await Promise.all(promises)
-  } catch {
-    error.value = 'Error loading team'
-  } finally {
-    loading.value = false
-  }
-}
-
-function handleRemove(id: number) {
-  removeFromTeam(id)
-  teamPokemon.value = teamPokemon.value.filter((p) => p.id !== id)
-}
+const { isEmpty } = useTeam()
+const { pokemonList, loading, error, hasTeam, loadTeam, removePokemon } = useTeamPokemon()
 
 function goToDetail(id: number) {
   router.push(`/team/${id}`)
@@ -64,11 +37,11 @@ onMounted(loadTeam)
 
     <main v-else-if="hasTeam" class="team__grid">
       <PokemonTeamCard
-        v-for="pokemon in teamPokemon"
+        v-for="pokemon in pokemonList"
         :key="pokemon.id"
         :pokemon="pokemon"
         @click="goToDetail(pokemon.id)"
-        @remove="handleRemove(pokemon.id)"
+        @remove="removePokemon(pokemon.id)"
       />
     </main>
   </div>

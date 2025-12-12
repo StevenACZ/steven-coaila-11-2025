@@ -24,7 +24,7 @@ defineEmits<{
       <div class="team-card__info">
         <span class="team-card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
         <h3 class="team-card__name">{{ pokemon.name }}</h3>
-        <PokemonTypes :types="pokemon.types" />
+        <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
       </div>
     </div>
 

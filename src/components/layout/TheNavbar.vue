@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTheme } from '@/composables/useTheme'
 import { useTeam } from '@/composables/useTeam'
 import BaseButton from '@/components/common/BaseButton.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { isDark, toggleTheme } = useTheme()
-const { teamSize, maxTeamSize } = useTeam()
+const { teamSize, maxTeamSize, clearTeam } = useTeam()
+
+const showClearModal = ref(false)
 
 const isHome = () => route.path === '/'
 const isTeamList = () => route.path === '/team'
@@ -28,6 +32,11 @@ function goBack() {
     router.push('/')
   }
 }
+
+function handleClearTeam() {
+  clearTeam()
+  showClearModal.value = false
+}
 </script>
 
 <template>
@@ -42,6 +51,15 @@ function goBack() {
           :title="isDark ? 'Modo día' : 'Modo noche'"
         >
           {{ isDark ? '☀️' : '🌙' }}
+        </button>
+
+        <button
+          v-if="isHome() && teamSize > 0"
+          class="navbar__reset"
+          @click="showClearModal = true"
+          title="Reiniciar equipo"
+        >
+          🗑️
         </button>
 
         <span class="navbar__counter">{{ teamSize }}/{{ maxTeamSize }}</span>
@@ -74,6 +92,15 @@ function goBack() {
       ← Volver
     </BaseButton>
   </Teleport>
+
+  <BaseModal
+    :show="showClearModal"
+    title="Reiniciar Equipo"
+    @close="showClearModal = false"
+    @confirm="handleClearTeam"
+  >
+    ¿Estás seguro de que quieres reiniciar tu equipo? Se eliminarán todos los Pokémon seleccionados.
+  </BaseModal>
 </template>
 
 <style lang="scss" scoped>
@@ -131,7 +158,8 @@ function goBack() {
     }
   }
 
-  &__theme {
+  &__theme,
+  &__reset {
     width: 40px;
     height: 40px;
     border-radius: $radius-sm;
@@ -150,6 +178,11 @@ function goBack() {
     &:hover {
       background: $color-secondary;
     }
+  }
+
+  &__reset:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
   }
 
   &__counter {

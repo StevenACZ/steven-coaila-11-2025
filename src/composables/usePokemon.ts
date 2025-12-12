@@ -1,8 +1,9 @@
 import { ref } from 'vue'
-import { pokemonService } from '@/services/pokemonService'
+import { usePokemonStore } from '@/stores/pokemonStore'
 import type { Pokemon } from '@/types/pokemon'
 
 export function usePokemonList() {
+  const pokemonStore = usePokemonStore()
   const pokemonList = ref<Pokemon[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -11,8 +12,7 @@ export function usePokemonList() {
     loading.value = true
     error.value = null
     try {
-      const { items } = await pokemonService.getList(limit, offset)
-      pokemonList.value = items
+      pokemonList.value = await pokemonStore.getList(limit, offset)
     } catch {
       error.value = 'Error loading Pokemon'
     } finally {
