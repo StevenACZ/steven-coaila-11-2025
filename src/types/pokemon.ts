@@ -13,6 +13,8 @@ export interface PokemonListResponse {
 export interface PokemonDetailResponse {
   id: number
   name: string
+  height: number
+  weight: number
   sprites: {
     other: {
       'official-artwork': {
@@ -27,11 +29,29 @@ export interface PokemonDetailResponse {
       url: string
     }
   }>
+  stats: Array<{
+    base_stat: number
+    stat: {
+      name: string
+    }
+  }>
+  cries: {
+    latest: string
+  }
 }
 
 export interface Pokemon {
   id: number
   name: string
   image: string
-  types?: string[]
+  types: string[]
+  height?: number
+  weight?: number
+  stats?: PokemonStat[]
+  cry?: string
+}
+
+export interface PokemonStat {
+  name: string
+  value: number
 }
