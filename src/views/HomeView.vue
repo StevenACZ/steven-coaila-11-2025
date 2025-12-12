@@ -2,19 +2,16 @@
 import { onMounted } from 'vue'
 import { usePokemonList } from '@/composables/usePokemon'
 import { usePokemonGrid } from '@/composables/usePokemonGrid'
-import { useTheme } from '@/composables/useTheme'
 import { useTeam } from '@/composables/useTeam'
 import PokemonCard from '@/components/pokemon/PokemonCard.vue'
 import BasePagination from '@/components/common/BasePagination.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 import BaseSearchInput from '@/components/common/BaseSearchInput.vue'
 
 const TOTAL_POKEMON = 151
 
 const { pokemonList, loading, error, fetchPokemon } = usePokemonList()
-const { isDark, toggleTheme } = useTheme()
-const { teamSize, isFull, maxTeamSize, isInTeam, togglePokemon } = useTeam()
+const { isFull, isInTeam, togglePokemon } = useTeam()
 
 const {
   currentPage,
@@ -31,23 +28,6 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 
 <template>
   <div class="home">
-    <header class="home__header">
-      <h1>Pokédex</h1>
-      <div class="home__team-status">
-        <button
-          class="theme-toggle"
-          @click="toggleTheme"
-          :title="isDark ? 'Modo día' : 'Modo noche'"
-        >
-          {{ isDark ? '☀️' : '🌙' }}
-        </button>
-        <span>{{ teamSize }}/{{ maxTeamSize }}</span>
-        <BaseButton desktop-only :disabled="teamSize === 0"> Ver Equipo → </BaseButton>
-      </div>
-    </header>
-
-    <BaseButton floating :disabled="teamSize === 0"> Ver Equipo ({{ teamSize }}) → </BaseButton>
-
     <div class="home__search">
       <BaseSearchInput v-model="searchQuery" placeholder="Buscar Pokémon..." />
     </div>
@@ -82,51 +62,12 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 @use '@/assets/styles/variables' as *;
 
 .home {
-  min-height: 100vh;
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 
   @media (max-width: 767px) {
     padding: 16px;
-  }
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-
-    h1 {
-      font-size: 2.5rem;
-      color: $color-primary;
-      text-shadow: 0 0 20px rgba($color-primary, 0.5);
-
-      @media (max-width: 767px) {
-        font-size: 1.5rem;
-      }
-    }
-  }
-
-  &__team-status {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    @media (max-width: 767px) {
-      gap: 8px;
-    }
-
-    span {
-      font-size: 1.25rem;
-      color: $color-text-muted;
-      font-family: $font-family-display;
-
-      @media (max-width: 767px) {
-        font-size: 1rem;
-      }
-    }
   }
 
   &__search {
@@ -152,29 +93,6 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
       gap: 12px;
       margin-bottom: 32px;
     }
-  }
-}
-
-.theme-toggle {
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-md;
-  background: $color-surface;
-  border: 1px solid $color-border;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: $transition;
-  flex-shrink: 0;
-
-  @media (max-width: 767px) {
-    width: 36px;
-    height: 36px;
-    border-radius: $radius-sm;
-    font-size: 1rem;
-  }
-
-  &:hover {
-    background: $color-secondary;
   }
 }
 </style>
