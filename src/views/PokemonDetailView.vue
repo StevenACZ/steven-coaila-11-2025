@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTeam } from '@/composables/useTeam'
-import { pokemonService } from '@/services/pokemonService'
+import { usePokemonStore } from '@/stores/pokemonStore'
 import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
 import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
 import PokemonStats from '@/components/pokemon/PokemonStats.vue'
@@ -12,6 +12,7 @@ import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const route = useRoute()
 const { isInTeam } = useTeam()
+const pokemonStore = usePokemonStore()
 
 const pokemon = ref<Pokemon | null>(null)
 const evolutionChain = ref<EvolutionPokemon[]>([])
@@ -26,8 +27,8 @@ async function loadPokemon() {
 
   try {
     const [pokemonData, speciesData] = await Promise.all([
-      pokemonService.getById(pokemonId),
-      pokemonService.getSpeciesData(pokemonId),
+      pokemonStore.getById(pokemonId),
+      pokemonStore.getSpeciesData(pokemonId),
     ])
 
     if (!isInTeam(pokemonId)) {
