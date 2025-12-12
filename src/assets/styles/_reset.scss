@@ -1,0 +1,73 @@
+@use 'variables' as *;
+
+// Dark theme (default)
+:root {
+  --color-bg: #1a1a2e;
+  --color-surface: #16213e;
+  --color-secondary: #0f3460;
+  --color-text: #eaeaea;
+  --color-text-muted: #8892a0;
+  --color-border: #2a2a4a;
+}
+
+// Light theme
+:root.light {
+  --color-bg: #f0f4f8;
+  --color-surface: #ffffff;
+  --color-secondary: #e2e8f0;
+  --color-text: #1a202c;
+  --color-text-muted: #64748b;
+  --color-border: #cbd5e1;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: $font-family;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-family-display;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
