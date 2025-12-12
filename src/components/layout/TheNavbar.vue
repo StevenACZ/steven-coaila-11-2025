@@ -46,20 +46,34 @@ function goBack() {
 
         <span class="navbar__counter">{{ teamSize }}/{{ maxTeamSize }}</span>
 
-        <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam">
+        <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam" desktop-only>
           Ver Equipo →
         </BaseButton>
 
-        <BaseButton v-else-if="isTeamDetail()" variant="secondary" @click="goBack">
+        <BaseButton v-else-if="isTeamDetail()" variant="secondary" @click="goBack" desktop-only>
           ← Volver al equipo
         </BaseButton>
 
-        <BaseButton v-else-if="isTeamList()" variant="secondary" @click="goBack">
+        <BaseButton v-else-if="isTeamList()" variant="secondary" @click="goBack" desktop-only>
           ← Volver
         </BaseButton>
       </div>
     </div>
   </nav>
+
+  <Teleport to="body">
+    <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam" floating>
+      Ver Equipo ({{ teamSize }}) →
+    </BaseButton>
+
+    <BaseButton v-else-if="isTeamDetail()" variant="secondary" @click="goBack" floating>
+      ← Volver al equipo
+    </BaseButton>
+
+    <BaseButton v-else-if="isTeamList()" variant="secondary" @click="goBack" floating>
+      ← Volver
+    </BaseButton>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>
