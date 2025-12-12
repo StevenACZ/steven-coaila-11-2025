@@ -53,16 +53,23 @@ export const pokemonService = {
     }
   },
 
-  async getEvolutionChain(id: number): Promise<EvolutionPokemon[]> {
+  async getSpeciesData(
+    id: number,
+  ): Promise<{ description: string; evolutionChain: EvolutionPokemon[] }> {
     const { data: species } = await api.get(`/pokemon-species/${id}`)
     const { data: evolution } = await api.get(species.evolution_chain.url)
 
-    const chain: EvolutionPokemon[] = []
+    const flavorEntry = species.flavor_text_entries.find(
+      (e: { language: { name: string } }) => e.language.name === 'es',
+    )
+    const description = flavorEntry?.flavor_text?.replace(/\n|\f/g, ' ') || ''
+
+    const evolutionChain: EvolutionPokemon[] = []
     let current = evolution.chain
 
     while (current) {
       const pokemonId = parseInt(current.species.url.split('/').slice(-2, -1)[0])
-      chain.push({
+      evolutionChain.push({
         id: pokemonId,
         name: current.species.name,
         image: getPokemonImageUrl(pokemonId),
@@ -70,6 +77,6 @@ export const pokemonService = {
       current = current.evolves_to[0]
     }
 
-    return chain
+    return { description, evolutionChain }
   },
 }

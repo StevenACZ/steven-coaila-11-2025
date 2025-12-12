@@ -49,6 +49,7 @@ export interface Pokemon {
   weight?: number
   stats?: PokemonStat[]
   cry?: string
+  description?: string
 }
 
 export interface PokemonStat {

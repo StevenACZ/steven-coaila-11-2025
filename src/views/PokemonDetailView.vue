@@ -25,9 +25,9 @@ async function loadPokemon() {
   error.value = null
 
   try {
-    const [pokemonData, evolutionData] = await Promise.all([
+    const [pokemonData, speciesData] = await Promise.all([
       pokemonService.getById(pokemonId),
-      pokemonService.getEvolutionChain(pokemonId),
+      pokemonService.getSpeciesData(pokemonId),
     ])
 
     if (!isInTeam(pokemonId)) {
@@ -35,8 +35,8 @@ async function loadPokemon() {
       return
     }
 
-    pokemon.value = pokemonData
-    evolutionChain.value = evolutionData
+    pokemon.value = { ...pokemonData, description: speciesData.description }
+    evolutionChain.value = speciesData.evolutionChain
   } catch {
     error.value = 'Error al cargar el Pokémon'
   } finally {
@@ -70,6 +70,10 @@ onMounted(loadPokemon)
           <PokemonTypes :types="pokemon.types" />
         </div>
       </div>
+
+      <p v-if="pokemon.description" class="detail__description">
+        {{ pokemon.description }}
+      </p>
 
       <div class="detail__physical">
         <div class="detail__physical-item">
@@ -163,6 +167,17 @@ onMounted(loadPokemon)
     @media (max-width: 767px) {
       font-size: 2rem;
     }
+  }
+
+  &__description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $color-text-muted;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: $color-surface;
+    border-radius: $radius-md;
+    font-style: italic;
   }
 
   &__physical {
