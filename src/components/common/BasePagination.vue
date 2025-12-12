@@ -50,7 +50,6 @@ function goToPage(page: number) {
 
   @media (max-width: 767px) {
     gap: 6px;
-    padding-bottom: 80px;
   }
 }
 
