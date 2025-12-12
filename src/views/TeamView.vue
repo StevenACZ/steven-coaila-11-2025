@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTeam } from '@/composables/useTeam'
-import { pokemonService } from '@/services/pokemonService'
+import { usePokemonStore } from '@/stores/pokemonStore'
 import type { Pokemon } from '@/types/pokemon'
 import PokemonTeamCard from '@/components/pokemon/PokemonTeamCard.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
@@ -10,6 +10,7 @@ import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const router = useRouter()
 const { pokemonIds, isEmpty, removeFromTeam } = useTeam()
+const pokemonStore = usePokemonStore()
 
 const teamPokemon = ref<Pokemon[]>([])
 const loading = ref(false)
@@ -24,7 +25,7 @@ async function loadTeam() {
   error.value = null
 
   try {
-    const promises = pokemonIds.value.map((id) => pokemonService.getById(id))
+    const promises = pokemonIds.value.map((id) => pokemonStore.getById(id))
     teamPokemon.value = await Promise.all(promises)
   } catch {
     error.value = 'Error loading team'
