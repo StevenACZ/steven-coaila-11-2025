@@ -32,6 +32,7 @@ onMounted(loadPokemon)
           :alt="pokemon.name"
           class="detail__image"
           :class="{ 'detail__image--crying': isCrying }"
+          loading="lazy"
         />
         <div class="detail__info">
           <span class="detail__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>

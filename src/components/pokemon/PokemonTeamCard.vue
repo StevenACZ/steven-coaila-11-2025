@@ -28,6 +28,7 @@ const isCrying = ref(false)
         :alt="pokemon.name"
         class="team-card__image"
         :class="{ 'team-card__image--crying': isCrying }"
+        loading="lazy"
       />
       <div class="team-card__info">
         <span class="team-card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>

@@ -23,7 +23,7 @@ defineEmits<{
     @click="$emit('click')"
   >
     <div class="card__check" v-if="selected">✓</div>
-    <img :src="pokemon.image" :alt="pokemon.name" class="card__image" />
+    <img :src="pokemon.image" :alt="pokemon.name" class="card__image" loading="lazy" />
     <span class="card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
     <span class="card__name">{{ pokemon.name }}</span>
   </div>

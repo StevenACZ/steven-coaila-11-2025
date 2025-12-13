@@ -18,7 +18,7 @@ defineProps<Props>()
           class="evolution__pokemon"
           :class="{ 'evolution__pokemon--current': pokemon.id === currentId }"
         >
-          <img :src="pokemon.image" :alt="pokemon.name" class="evolution__image" />
+          <img :src="pokemon.image" :alt="pokemon.name" class="evolution__image" loading="lazy" />
           <span class="evolution__name">{{ pokemon.name }}</span>
         </div>
         <span v-if="index < chain.length - 1" class="evolution__arrow">→</span>
