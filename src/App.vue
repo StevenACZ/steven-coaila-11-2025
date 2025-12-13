@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import TheLayout from '@/components/layout/TheLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 </script>
 
 <template>
-  <TheLayout>
+  <DefaultLayout>
     <RouterView v-slot="{ Component }">
       <Transition name="scale" mode="out-in">
         <component :is="Component" />
       </Transition>
     </RouterView>
-  </TheLayout>
+  </DefaultLayout>
 </template>
 
 <style lang="scss">
