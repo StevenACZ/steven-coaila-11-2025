@@ -45,7 +45,7 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
       No se encontraron Pokémon
     </div>
 
-    <main v-else class="home__grid">
+    <TransitionGroup v-else name="grid" tag="main" class="home__grid">
       <PokemonCard
         v-for="pokemon in displayedPokemon"
         :key="pokemon.id"
@@ -54,7 +54,7 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
         :disabled="isFull && !isInTeam(pokemon.id)"
         @click="togglePokemon(pokemon.id)"
       />
-    </main>
+    </TransitionGroup>
 
     <BasePagination
       v-if="!isSearching && !isFiltering && !loading"
@@ -104,5 +104,28 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
       margin-bottom: 32px;
     }
   }
+}
+
+.grid-enter-active {
+  transition: all 0.3s ease;
+}
+
+.grid-leave-active {
+  transition: all 0.2s ease;
+  position: absolute;
+}
+
+.grid-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.grid-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.grid-move {
+  transition: transform 0.3s ease;
 }
 </style>
