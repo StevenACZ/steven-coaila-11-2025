@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePokemonDetail } from '@/composables/usePokemonDetail'
 import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
@@ -14,6 +14,8 @@ const pokemonId = Number(route.params.id)
 const { pokemon, evolutionChain, loading, error, loadPokemon, formatHeight, formatWeight } =
   usePokemonDetail(pokemonId)
 
+const isCrying = ref(false)
+
 onMounted(loadPokemon)
 </script>
 
@@ -25,11 +27,19 @@ onMounted(loadPokemon)
 
     <template v-else-if="pokemon">
       <div class="detail__header">
-        <img :src="pokemon.image" :alt="pokemon.name" class="detail__image" />
+        <img
+          :src="pokemon.image"
+          :alt="pokemon.name"
+          class="detail__image"
+          :class="{ 'detail__image--crying': isCrying }"
+        />
         <div class="detail__info">
           <span class="detail__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
           <h1 class="detail__name">{{ pokemon.name }}</h1>
-          <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
+          <div class="detail__actions">
+            <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
+            <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
+          </div>
         </div>
       </div>
 
@@ -55,10 +65,6 @@ onMounted(loadPokemon)
 
       <div class="detail__section">
         <EvolutionChain :chain="evolutionChain" :current-id="pokemonId" />
-      </div>
-
-      <div class="detail__footer">
-        <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" />
       </div>
     </template>
   </div>
@@ -100,10 +106,16 @@ onMounted(loadPokemon)
     width: 200px;
     height: 200px;
     object-fit: contain;
+    transition: transform 0.2s ease;
 
     @media (max-width: 767px) {
       width: 150px;
       height: 150px;
+    }
+
+    &--crying {
+      animation: cry-shake 0.3s ease-in-out infinite;
+      transform: scale(1.05);
     }
   }
 
@@ -111,6 +123,17 @@ onMounted(loadPokemon)
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    @media (max-width: 767px) {
+      justify-content: center;
+    }
   }
 
   &__id {
@@ -191,6 +214,16 @@ onMounted(loadPokemon)
   &__footer {
     display: flex;
     justify-content: center;
+  }
+}
+
+@keyframes cry-shake {
+  0%,
+  100% {
+    transform: scale(1.05) translateY(0);
+  }
+  50% {
+    transform: scale(1.05) translateY(-4px);
   }
 }
 </style>

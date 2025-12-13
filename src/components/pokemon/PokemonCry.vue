@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 interface Props {
   url: string
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  playing: [isPlaying: boolean]
+}>()
 
 const isPlaying = ref(false)
 const audio = ref<HTMLAudioElement | null>(null)
+
+watch(isPlaying, (value) => emit('playing', value))
 
 function play() {
   if (isPlaying.value) {

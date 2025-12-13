@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Pokemon } from '@/types/pokemon'
 import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
 import PokemonStats from '@/components/pokemon/PokemonStats.vue'
@@ -13,6 +14,8 @@ defineEmits<{
   click: []
   remove: []
 }>()
+
+const isCrying = ref(false)
 </script>
 
 <template>
@@ -20,7 +23,12 @@ defineEmits<{
     <button class="team-card__remove" @click.stop="$emit('remove')" title="Eliminar">✕</button>
 
     <div class="team-card__header">
-      <img :src="pokemon.image" :alt="pokemon.name" class="team-card__image" />
+      <img
+        :src="pokemon.image"
+        :alt="pokemon.name"
+        class="team-card__image"
+        :class="{ 'team-card__image--crying': isCrying }"
+      />
       <div class="team-card__info">
         <span class="team-card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
         <h3 class="team-card__name">{{ pokemon.name }}</h3>
@@ -33,7 +41,7 @@ defineEmits<{
     </div>
 
     <div class="team-card__footer">
-      <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" />
+      <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
     </div>
   </div>
 </template>
@@ -89,10 +97,16 @@ defineEmits<{
     width: 100px;
     height: 100px;
     object-fit: contain;
+    transition: transform 0.2s ease;
 
     @media (max-width: 767px) {
       width: 80px;
       height: 80px;
+    }
+
+    &--crying {
+      animation: cry-shake 0.3s ease-in-out infinite;
+      transform: scale(1.08);
     }
   }
 
@@ -128,6 +142,16 @@ defineEmits<{
   &__footer {
     display: flex;
     justify-content: flex-end;
+  }
+}
+
+@keyframes cry-shake {
+  0%,
+  100% {
+    transform: scale(1.08) translateY(0);
+  }
+  50% {
+    transform: scale(1.08) translateY(-3px);
   }
 }
 </style>
