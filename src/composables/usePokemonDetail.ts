@@ -1,10 +1,11 @@
 import { ref } from 'vue'
 import { usePokemonStore } from '@/stores/pokemonStore'
+import { pokemonService } from '@/services/pokemonService'
 import { useTeam } from '@/composables/useTeam'
 import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
 
 export function usePokemonDetail(pokemonId: number) {
-  const pokemonStore = usePokemonStore()
+  const store = usePokemonStore()
   const { isInTeam } = useTeam()
 
   const pokemon = ref<Pokemon | null>(null)
@@ -12,14 +13,36 @@ export function usePokemonDetail(pokemonId: number) {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  async function fetchPokemon(id: number): Promise<Pokemon> {
+    const cached = store.getById(id)
+    if (cached) return cached
+
+    const data = await pokemonService.getById(id)
+
+    store.setPokemon(data)
+
+    return data
+  }
+
+  async function fetchSpeciesData(id: number) {
+    const cached = store.getSpeciesData(id)
+    if (cached) return cached
+
+    const data = await pokemonService.getSpeciesData(id)
+
+    store.setSpeciesData(id, data)
+
+    return data
+  }
+
   async function loadPokemon() {
     loading.value = true
     error.value = null
 
     try {
       const [pokemonData, speciesData] = await Promise.all([
-        pokemonStore.getById(pokemonId),
-        pokemonStore.getSpeciesData(pokemonId),
+        fetchPokemon(pokemonId),
+        fetchSpeciesData(pokemonId),
       ])
 
       if (!isInTeam(pokemonId)) {

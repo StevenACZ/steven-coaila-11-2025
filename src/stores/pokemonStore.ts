@@ -1,50 +1,52 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { pokemonService } from '@/services/pokemonService'
 import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
 
 export const usePokemonStore = defineStore('pokemon', () => {
   const listCache = ref<Pokemon[] | null>(null)
-
   const cache = ref<Map<number, Pokemon>>(new Map())
-
   const speciesCache = ref<
     Map<number, { description: string; evolutionChain: EvolutionPokemon[] }>
   >(new Map())
 
-  async function getList(limit: number, offset: number): Promise<Pokemon[]> {
-    if (listCache.value) {
-      return listCache.value
-    }
-    const { items } = await pokemonService.getList(limit, offset)
-    listCache.value = items
-    return items
+  function getList() {
+    return listCache.value
   }
 
-  async function getById(id: number): Promise<Pokemon> {
-    if (cache.value.has(id)) {
-      return cache.value.get(id)!
-    }
-    const pokemon = await pokemonService.getById(id)
-    cache.value.set(id, pokemon)
-    return pokemon
+  function getById(id: number) {
+    return cache.value.get(id) || null
   }
 
-  async function getSpeciesData(id: number) {
-    if (speciesCache.value.has(id)) {
-      return speciesCache.value.get(id)!
-    }
+  function getSpeciesData(id: number) {
+    return speciesCache.value.get(id) || null
+  }
 
-    const data = await pokemonService.getSpeciesData(id)
+  function setList(list: Pokemon[]) {
+    listCache.value = list
+  }
+
+  function setPokemon(pokemon: Pokemon) {
+    cache.value.set(pokemon.id, pokemon)
+  }
+
+  function setSpeciesData(
+    id: number,
+    data: { description: string; evolutionChain: EvolutionPokemon[] },
+  ) {
     speciesCache.value.set(id, data)
-    return data
   }
 
   return {
     listCache,
     cache,
+    speciesCache,
+
     getList,
     getById,
     getSpeciesData,
+
+    setList,
+    setPokemon,
+    setSpeciesData,
   }
 })
