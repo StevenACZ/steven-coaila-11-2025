@@ -41,6 +41,7 @@ function goToPage(page: number) {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .pagination {
   display: flex;
@@ -48,7 +49,7 @@ function goToPage(page: number) {
   gap: 8px;
   flex-wrap: wrap;
 
-  @media (max-width: 767px) {
+  @include mobile {
     gap: 6px;
   }
 }
@@ -68,7 +69,7 @@ function goToPage(page: number) {
   -webkit-tap-highlight-color: transparent;
   outline: none;
 
-  @media (max-width: 767px) {
+  @include mobile {
     width: 32px;
     height: 32px;
     font-size: 0.75rem;

@@ -67,13 +67,14 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .home {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 
-  @media (max-width: 767px) {
+  @include mobile {
     padding: 16px 16px 100px 16px;
   }
 
@@ -98,7 +99,7 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
     gap: 20px;
     margin-bottom: 40px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 12px;
       margin-bottom: 32px;

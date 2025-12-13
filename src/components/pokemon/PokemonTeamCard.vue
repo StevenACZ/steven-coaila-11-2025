@@ -48,6 +48,7 @@ const isCrying = ref(false)
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .team-card {
   background: $color-surface;
@@ -99,14 +100,13 @@ const isCrying = ref(false)
     object-fit: contain;
     transition: transform 0.2s ease;
 
-    @media (max-width: 767px) {
+    @include mobile {
       width: 80px;
       height: 80px;
     }
 
     &--crying {
-      animation: cry-shake 0.3s ease-in-out infinite;
-      transform: scale(1.08);
+      @include crying-animation(1.08);
     }
   }
 
@@ -130,7 +130,7 @@ const isCrying = ref(false)
     color: $color-text;
     margin: 4px 0 8px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 1.25rem;
     }
   }
@@ -142,16 +142,6 @@ const isCrying = ref(false)
   &__footer {
     display: flex;
     justify-content: flex-end;
-  }
-}
-
-@keyframes cry-shake {
-  0%,
-  100% {
-    transform: scale(1.08) translateY(0);
-  }
-  50% {
-    transform: scale(1.08) translateY(-3px);
   }
 }
 </style>

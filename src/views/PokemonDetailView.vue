@@ -72,13 +72,14 @@ onMounted(loadPokemon)
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .detail {
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
 
-  @media (max-width: 767px) {
+  @include mobile {
     padding: 16px 16px 100px 16px;
   }
 
@@ -94,7 +95,7 @@ onMounted(loadPokemon)
     gap: 24px;
     margin-bottom: 32px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       flex-direction: column;
       align-items: center;
       text-align: center;
@@ -108,14 +109,13 @@ onMounted(loadPokemon)
     object-fit: contain;
     transition: transform 0.2s ease;
 
-    @media (max-width: 767px) {
+    @include mobile {
       width: 150px;
       height: 150px;
     }
 
     &--crying {
-      animation: cry-shake 0.3s ease-in-out infinite;
-      transform: scale(1.05);
+      @include crying-animation(1.05);
     }
   }
 
@@ -131,7 +131,7 @@ onMounted(loadPokemon)
     gap: 12px;
     flex-wrap: wrap;
 
-    @media (max-width: 767px) {
+    @include mobile {
       justify-content: center;
     }
   }
@@ -149,7 +149,7 @@ onMounted(loadPokemon)
     color: $color-text;
     margin: 8px 0 16px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 2rem;
     }
   }
@@ -173,7 +173,7 @@ onMounted(loadPokemon)
     background: $color-surface;
     border-radius: $radius-md;
 
-    @media (max-width: 767px) {
+    @include mobile {
       justify-content: center;
     }
   }
@@ -214,16 +214,6 @@ onMounted(loadPokemon)
   &__footer {
     display: flex;
     justify-content: center;
-  }
-}
-
-@keyframes cry-shake {
-  0%,
-  100% {
-    transform: scale(1.05) translateY(0);
-  }
-  50% {
-    transform: scale(1.05) translateY(-4px);
   }
 }
 </style>

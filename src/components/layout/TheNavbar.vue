@@ -105,6 +105,7 @@ function handleClearTeam() {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .navbar {
   position: sticky;
@@ -123,7 +124,7 @@ function handleClearTeam() {
     justify-content: space-between;
     gap: 16px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       padding: 12px 16px;
     }
   }
@@ -139,7 +140,7 @@ function handleClearTeam() {
     text-shadow: 0 0 20px rgba($color-primary, 0.5);
     transition: $transition;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 1.25rem;
     }
 
@@ -153,7 +154,7 @@ function handleClearTeam() {
     align-items: center;
     gap: 12px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       gap: 8px;
     }
   }
@@ -169,7 +170,7 @@ function handleClearTeam() {
     cursor: pointer;
     transition: $transition;
 
-    @media (max-width: 767px) {
+    @include mobile {
       width: 36px;
       height: 36px;
       font-size: 1rem;
@@ -190,7 +191,7 @@ function handleClearTeam() {
     color: $color-text-muted;
     font-family: $font-family-display;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 0.9rem;
     }
   }

@@ -1,0 +1,20 @@
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin crying-animation($scale: 1.05) {
+  animation: cry-shake 0.3s ease-in-out infinite;
+  transform: scale($scale);
+}
+
+@keyframes cry-shake {
+  0%,
+  100% {
+    transform: scale(var(--cry-scale, 1.05)) translateY(0);
+  }
+  50% {
+    transform: scale(var(--cry-scale, 1.05)) translateY(-4px);
+  }
+}

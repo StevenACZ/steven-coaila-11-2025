@@ -49,13 +49,14 @@ onMounted(loadTeam)
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .team {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 
-  @media (max-width: 767px) {
+  @include mobile {
     padding: 16px 16px 100px 16px;
   }
 
@@ -64,7 +65,7 @@ onMounted(loadTeam)
     color: $color-text;
     margin-bottom: 24px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 1.5rem;
     }
   }
@@ -92,7 +93,7 @@ onMounted(loadTeam)
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       grid-template-columns: 1fr;
       gap: 16px;
     }

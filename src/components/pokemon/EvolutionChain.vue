@@ -29,6 +29,7 @@ defineProps<Props>()
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .evolution {
   &__title {
@@ -45,7 +46,7 @@ defineProps<Props>()
     justify-content: center;
     gap: 16px;
 
-    @media (max-width: 767px) {
+    @include mobile {
       justify-content: flex-start;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
@@ -93,7 +94,7 @@ defineProps<Props>()
     height: 80px;
     object-fit: contain;
 
-    @media (max-width: 767px) {
+    @include mobile {
       width: 60px;
       height: 60px;
     }
@@ -110,7 +111,7 @@ defineProps<Props>()
     font-size: 1.5rem;
     color: $color-text-muted;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 1.25rem;
     }
   }

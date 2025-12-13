@@ -26,6 +26,7 @@ withDefaults(defineProps<Props>(), {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .btn {
   padding: 12px 24px;
@@ -70,7 +71,7 @@ withDefaults(defineProps<Props>(), {
   &--desktop {
     display: inline-block;
 
-    @media (max-width: 767px) {
+    @include mobile {
       display: none;
     }
   }
@@ -78,7 +79,7 @@ withDefaults(defineProps<Props>(), {
   &--floating {
     display: none;
 
-    @media (max-width: 767px) {
+    @include mobile {
       display: block;
       position: fixed;
       bottom: 24px;

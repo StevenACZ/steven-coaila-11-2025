@@ -31,6 +31,7 @@ defineEmits<{
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+@use '@/assets/styles/mixins' as *;
 
 .card {
   background: $color-surface;
@@ -42,7 +43,7 @@ defineEmits<{
   border: 2px solid transparent;
   position: relative;
 
-  @media (max-width: 767px) {
+  @include mobile {
     border-radius: $radius-md;
     padding: 12px;
   }
@@ -80,7 +81,7 @@ defineEmits<{
     font-size: 14px;
     color: white;
 
-    @media (max-width: 767px) {
+    @include mobile {
       top: 6px;
       right: 6px;
       width: 20px;
@@ -95,7 +96,7 @@ defineEmits<{
     margin: 0 auto 12px;
     object-fit: contain;
 
-    @media (max-width: 767px) {
+    @include mobile {
       width: 80px;
       height: 80px;
       margin: 0 auto 8px;
@@ -110,7 +111,7 @@ defineEmits<{
     margin-bottom: 4px;
     letter-spacing: 0.1em;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 0.65rem;
       margin-bottom: 2px;
     }
@@ -124,7 +125,7 @@ defineEmits<{
     color: $color-text;
     letter-spacing: 0.05em;
 
-    @media (max-width: 767px) {
+    @include mobile {
       font-size: 0.8rem;
     }
   }
