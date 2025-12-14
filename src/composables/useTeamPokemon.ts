@@ -1,12 +1,14 @@
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { usePokemonStore } from '@/stores/pokemonStore'
+import { useTeamStore } from '@/stores/teamStore'
 import { pokemonService } from '@/services/pokemonService'
-import { useTeam } from '@/composables/useTeam'
 import type { Pokemon } from '@/types/pokemon'
 
 export function useTeamPokemon() {
-  const store = usePokemonStore()
-  const { pokemonIds, removeFromTeam } = useTeam()
+  const pokemonStore = usePokemonStore()
+  const teamStore = useTeamStore()
+  const { pokemonIds } = storeToRefs(teamStore)
 
   const pokemonList = ref<Pokemon[]>([])
   const loading = ref(false)
@@ -15,12 +17,12 @@ export function useTeamPokemon() {
   const hasTeam = computed(() => pokemonList.value.length > 0)
 
   async function fetchPokemon(id: number): Promise<Pokemon> {
-    const cached = store.getById(id)
+    const cached = pokemonStore.getById(id)
     if (cached) return cached
 
     const data = await pokemonService.getById(id)
 
-    store.setPokemon(data)
+    pokemonStore.setPokemon(data)
 
     return data
   }
@@ -42,7 +44,7 @@ export function useTeamPokemon() {
   }
 
   function removePokemon(id: number) {
-    removeFromTeam(id)
+    teamStore.removeFromTeam(id)
     pokemonList.value = pokemonList.value.filter((p) => p.id !== id)
   }
 
@@ -51,6 +53,7 @@ export function useTeamPokemon() {
     loading,
     error,
     hasTeam,
+
     loadTeam,
     removePokemon,
   }

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter, useRoute } from 'vue-router'
 import { useTheme } from '@/composables/useTheme'
-import { useTeam } from '@/composables/useTeam'
+import { useTeamStore } from '@/stores/teamStore'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { isDark, toggleTheme } = useTheme()
-const { teamSize, maxTeamSize, clearTeam } = useTeam()
+const teamStore = useTeamStore()
+const { teamSize } = storeToRefs(teamStore)
 
 const showClearModal = ref(false)
 
@@ -34,7 +36,7 @@ function goBack() {
 }
 
 function handleClearTeam() {
-  clearTeam()
+  teamStore.clearTeam()
   showClearModal.value = false
 }
 </script>
@@ -62,7 +64,7 @@ function handleClearTeam() {
           🗑️
         </button>
 
-        <span class="navbar__counter">{{ teamSize }}/{{ maxTeamSize }}</span>
+        <span class="navbar__counter">{{ teamSize }}/{{ teamStore.maxTeamSize }}</span>
 
         <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam" desktop-only>
           Ver Equipo →

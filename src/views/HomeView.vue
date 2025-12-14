@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { usePokemonList } from '@/composables/usePokemon'
+import { storeToRefs } from 'pinia'
+import { usePokemonList } from '@/composables/usePokemonList'
 import { usePokemonGrid } from '@/composables/usePokemonGrid'
-import { useTeam } from '@/composables/useTeam'
+import { useTeamStore } from '@/stores/teamStore'
 import PokemonCard from '@/components/pokemon/PokemonCard.vue'
 import TypeFilter from '@/components/pokemon/TypeFilter.vue'
 import BasePagination from '@/components/common/BasePagination.vue'
@@ -12,7 +13,8 @@ import BaseSearchInput from '@/components/common/BaseSearchInput.vue'
 const TOTAL_POKEMON = 151
 
 const { pokemonList, loading, error, fetchPokemon } = usePokemonList()
-const { isFull, isInTeam, togglePokemon } = useTeam()
+const teamStore = useTeamStore()
+const { isFull } = storeToRefs(teamStore)
 
 const {
   currentPage,
@@ -50,9 +52,9 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
         v-for="pokemon in displayedPokemon"
         :key="pokemon.id"
         :pokemon="pokemon"
-        :selected="isInTeam(pokemon.id)"
-        :disabled="isFull && !isInTeam(pokemon.id)"
-        @click="togglePokemon(pokemon.id)"
+        :selected="teamStore.isInTeam(pokemon.id)"
+        :disabled="isFull && !teamStore.isInTeam(pokemon.id)"
+        @click="teamStore.togglePokemon(pokemon.id)"
       />
     </TransitionGroup>
 

@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { useTeam } from '@/composables/useTeam'
+import { useTeamStore } from '@/stores/teamStore'
 import { useTeamPokemon } from '@/composables/useTeamPokemon'
 import PokemonTeamCard from '@/components/pokemon/PokemonTeamCard.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const router = useRouter()
-const { isEmpty } = useTeam()
+
+const teamStore = useTeamStore()
+const { isEmpty } = storeToRefs(teamStore)
+
 const { pokemonList, loading, error, hasTeam, loadTeam, removePokemon } = useTeamPokemon()
 
 function goToDetail(id: number) {

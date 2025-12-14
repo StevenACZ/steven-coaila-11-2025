@@ -1,12 +1,12 @@
 import { ref } from 'vue'
 import { usePokemonStore } from '@/stores/pokemonStore'
+import { useTeamStore } from '@/stores/teamStore'
 import { pokemonService } from '@/services/pokemonService'
-import { useTeam } from '@/composables/useTeam'
 import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
 
 export function usePokemonDetail(pokemonId: number) {
-  const store = usePokemonStore()
-  const { isInTeam } = useTeam()
+  const pokemonStore = usePokemonStore()
+  const teamStore = useTeamStore()
 
   const pokemon = ref<Pokemon | null>(null)
   const evolutionChain = ref<EvolutionPokemon[]>([])
@@ -14,23 +14,23 @@ export function usePokemonDetail(pokemonId: number) {
   const error = ref<string | null>(null)
 
   async function fetchPokemon(id: number): Promise<Pokemon> {
-    const cached = store.getById(id)
+    const cached = pokemonStore.getById(id)
     if (cached) return cached
 
     const data = await pokemonService.getById(id)
 
-    store.setPokemon(data)
+    pokemonStore.setPokemon(data)
 
     return data
   }
 
   async function fetchSpeciesData(id: number) {
-    const cached = store.getSpeciesData(id)
+    const cached = pokemonStore.getSpeciesData(id)
     if (cached) return cached
 
     const data = await pokemonService.getSpeciesData(id)
 
-    store.setSpeciesData(id, data)
+    pokemonStore.setSpeciesData(id, data)
 
     return data
   }
@@ -45,7 +45,7 @@ export function usePokemonDetail(pokemonId: number) {
         fetchSpeciesData(pokemonId),
       ])
 
-      if (!isInTeam(pokemonId)) {
+      if (!teamStore.isInTeam(pokemonId)) {
         error.value = 'Este Pokémon no está en tu equipo'
         return
       }
@@ -72,6 +72,7 @@ export function usePokemonDetail(pokemonId: number) {
     evolutionChain,
     loading,
     error,
+
     loadPokemon,
     formatHeight,
     formatWeight,
