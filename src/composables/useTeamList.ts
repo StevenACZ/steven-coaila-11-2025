@@ -7,8 +7,11 @@ import type { Pokemon } from '@/types/pokemon'
 
 export function useTeamList() {
   const pokemonStore = usePokemonStore()
+  const { getById, setPokemon } = pokemonStore
+
   const teamStore = useTeamStore()
   const { pokemonIds } = storeToRefs(teamStore)
+  const { removeFromTeam } = teamStore
 
   const pokemonList = ref<Pokemon[]>([])
   const loading = ref(false)
@@ -17,12 +20,12 @@ export function useTeamList() {
   const hasTeam = computed(() => pokemonList.value.length > 0)
 
   async function fetchPokemon(id: number): Promise<Pokemon> {
-    const cached = pokemonStore.getById(id)
+    const cached = getById(id)
     if (cached) return cached
 
     const data = await pokemonService.getById(id)
 
-    pokemonStore.setPokemon(data)
+    setPokemon(data)
 
     return data
   }
@@ -44,7 +47,7 @@ export function useTeamList() {
   }
 
   function removePokemon(id: number) {
-    teamStore.removeFromTeam(id)
+    removeFromTeam(id)
     pokemonList.value = pokemonList.value.filter((p) => p.id !== id)
   }
 

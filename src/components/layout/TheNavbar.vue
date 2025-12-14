@@ -10,8 +10,10 @@ import BaseModal from '@/components/common/BaseModal.vue'
 const router = useRouter()
 const route = useRoute()
 const { isDark, toggleTheme } = useTheme()
+
 const teamStore = useTeamStore()
-const { teamSize } = storeToRefs(teamStore)
+const { maxTeamSize, teamSize } = storeToRefs(teamStore)
+const { clearTeam } = teamStore
 
 const showClearModal = ref(false)
 
@@ -36,7 +38,7 @@ function goBack() {
 }
 
 function handleClearTeam() {
-  teamStore.clearTeam()
+  clearTeam()
   showClearModal.value = false
 }
 </script>
@@ -64,7 +66,7 @@ function handleClearTeam() {
           🗑️
         </button>
 
-        <span class="navbar__counter">{{ teamSize }}/{{ teamStore.maxTeamSize }}</span>
+        <span class="navbar__counter">{{ teamSize }}/{{ maxTeamSize }}</span>
 
         <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam" desktop-only>
           Ver Equipo →

@@ -13,8 +13,10 @@ import BaseSearchInput from '@/components/common/BaseSearchInput.vue'
 const TOTAL_POKEMON = 151
 
 const { pokemonList, loading, error, fetchPokemon } = usePokemonList()
+
 const teamStore = useTeamStore()
 const { isFull } = storeToRefs(teamStore)
+const { isInTeam, togglePokemon } = teamStore
 
 const {
   currentPage,
@@ -52,9 +54,9 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
         v-for="pokemon in displayedPokemon"
         :key="pokemon.id"
         :pokemon="pokemon"
-        :selected="teamStore.isInTeam(pokemon.id)"
-        :disabled="isFull && !teamStore.isInTeam(pokemon.id)"
-        @click="teamStore.togglePokemon(pokemon.id)"
+        :selected="isInTeam(pokemon.id)"
+        :disabled="isFull && !isInTeam(pokemon.id)"
+        @click="togglePokemon(pokemon.id)"
       />
     </TransitionGroup>
 
