@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePokemonList } from '@/composables/usePokemonList'
-import { usePokemonGrid } from '@/composables/usePokemonGrid'
+import { usePokemonPagination } from '@/composables/usePokemonPagination'
 import { useTeamStore } from '@/stores/teamStore'
 import CardHome from '@/components/pokemon/CardHome.vue'
 import TypeFilter from '@/components/pokemon/TypeFilter.vue'
@@ -26,7 +26,7 @@ const {
   filteredPokemon,
   displayedPokemon,
   goToPage,
-} = usePokemonGrid(pokemonList, 25)
+} = usePokemonPagination(pokemonList, 25)
 
 onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 </script>

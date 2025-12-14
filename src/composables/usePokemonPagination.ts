@@ -1,7 +1,7 @@
 import { ref, computed, type Ref } from 'vue'
 import type { Pokemon } from '@/types/pokemon'
 
-export function usePokemonGrid(pokemonList: Ref<Pokemon[]>, perPage: number) {
+export function usePokemonPagination(pokemonList: Ref<Pokemon[]>, perPage: number) {
   const currentPage = ref(1)
   const searchQuery = ref('')
   const selectedTypes = ref<string[]>([])
@@ -46,6 +46,7 @@ export function usePokemonGrid(pokemonList: Ref<Pokemon[]>, perPage: number) {
     totalPages,
     filteredPokemon,
     displayedPokemon,
+
     goToPage,
   }
 }

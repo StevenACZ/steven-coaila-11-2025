@@ -5,7 +5,7 @@ import { useTeamStore } from '@/stores/teamStore'
 import { pokemonService } from '@/services/pokemonService'
 import type { Pokemon } from '@/types/pokemon'
 
-export function useTeamPokemon() {
+export function useTeamList() {
   const pokemonStore = usePokemonStore()
   const teamStore = useTeamStore()
   const { pokemonIds } = storeToRefs(teamStore)

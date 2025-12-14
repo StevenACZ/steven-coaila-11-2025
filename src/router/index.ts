@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/team/:id',
       name: 'pokemon-detail',
-      component: () => import('@/views/PokemonDetailView.vue'),
+      component: () => import('@/views/DetailView.vue'),
     },
   ],
 })
