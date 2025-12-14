@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Pokemon } from '@/types/pokemon'
-import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
-import PokemonStats from '@/components/pokemon/PokemonStats.vue'
-import PokemonCry from '@/components/pokemon/PokemonCry.vue'
+import TypeList from '@/components/pokemon/TypeList.vue'
+import StatsList from '@/components/pokemon/StatsList.vue'
+import CryButton from '@/components/pokemon/CryButton.vue'
 
 interface Props {
   pokemon: Pokemon
@@ -33,16 +33,16 @@ const isCrying = ref(false)
       <div class="team-card__info">
         <span class="team-card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
         <h3 class="team-card__name">{{ pokemon.name }}</h3>
-        <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
+        <TypeList v-if="pokemon.types" :types="pokemon.types" />
       </div>
     </div>
 
     <div class="team-card__body">
-      <PokemonStats v-if="pokemon.stats" :stats="pokemon.stats" />
+      <StatsList v-if="pokemon.stats" :stats="pokemon.stats" />
     </div>
 
     <div class="team-card__footer">
-      <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
+      <CryButton v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
     </div>
   </div>
 </template>

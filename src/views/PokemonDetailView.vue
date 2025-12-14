@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePokemonDetail } from '@/composables/usePokemonDetail'
-import PokemonTypes from '@/components/pokemon/PokemonTypes.vue'
-import PokemonStats from '@/components/pokemon/PokemonStats.vue'
-import PokemonCry from '@/components/pokemon/PokemonCry.vue'
+import TypeList from '@/components/pokemon/TypeList.vue'
+import StatsList from '@/components/pokemon/StatsList.vue'
+import CryButton from '@/components/pokemon/CryButton.vue'
 import EvolutionChain from '@/components/pokemon/EvolutionChain.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
@@ -38,8 +38,8 @@ onMounted(loadPokemon)
           <span class="detail__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
           <h1 class="detail__name">{{ pokemon.name }}</h1>
           <div class="detail__actions">
-            <PokemonTypes v-if="pokemon.types" :types="pokemon.types" />
-            <PokemonCry v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
+            <TypeList v-if="pokemon.types" :types="pokemon.types" />
+            <CryButton v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ onMounted(loadPokemon)
 
       <div class="detail__section">
         <h3 class="detail__section-title">Estadísticas</h3>
-        <PokemonStats v-if="pokemon.stats" :stats="pokemon.stats" />
+        <StatsList v-if="pokemon.stats" :stats="pokemon.stats" />
       </div>
 
       <div class="detail__section">

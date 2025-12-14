@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { usePokemonList } from '@/composables/usePokemonList'
 import { usePokemonGrid } from '@/composables/usePokemonGrid'
 import { useTeamStore } from '@/stores/teamStore'
-import PokemonCard from '@/components/pokemon/PokemonCard.vue'
+import CardHome from '@/components/pokemon/CardHome.vue'
 import TypeFilter from '@/components/pokemon/TypeFilter.vue'
 import BasePagination from '@/components/common/BasePagination.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
@@ -48,7 +48,7 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
     </div>
 
     <TransitionGroup v-else name="grid" tag="main" class="home__grid">
-      <PokemonCard
+      <CardHome
         v-for="pokemon in displayedPokemon"
         :key="pokemon.id"
         :pokemon="pokemon"

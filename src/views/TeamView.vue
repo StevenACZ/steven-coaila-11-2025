@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useTeamStore } from '@/stores/teamStore'
 import { useTeamPokemon } from '@/composables/useTeamPokemon'
-import PokemonTeamCard from '@/components/pokemon/PokemonTeamCard.vue'
+import CardTeam from '@/components/pokemon/CardTeam.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
@@ -40,7 +40,7 @@ onMounted(loadTeam)
     </div>
 
     <main v-else-if="hasTeam" class="team__grid">
-      <PokemonTeamCard
+      <CardTeam
         v-for="pokemon in pokemonList"
         :key="pokemon.id"
         :pokemon="pokemon"
