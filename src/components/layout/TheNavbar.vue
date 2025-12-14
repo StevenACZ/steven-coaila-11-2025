@@ -12,8 +12,8 @@ const route = useRoute()
 const { isDark, toggleTheme } = useTheme()
 
 const teamStore = useTeamStore()
-const { maxTeamSize, teamSize } = storeToRefs(teamStore)
-const { clearTeam } = teamStore
+const { teamSize } = storeToRefs(teamStore)
+const { maxTeamSize, clearTeam } = teamStore
 
 const showClearModal = ref(false)
 
