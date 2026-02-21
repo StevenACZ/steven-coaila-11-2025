@@ -16,7 +16,10 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix --cache",
     "lint": "run-s lint:*",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "format:check": "prettier --check --experimental-cli src/",
+    "typecheck": "npm run type-check",
+    "test:run": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "axios": "^1.13.2",
