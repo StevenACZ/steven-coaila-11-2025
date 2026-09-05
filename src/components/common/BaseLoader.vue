@@ -9,8 +9,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class="loader">
-    <div class="loader__spinner"></div>
+  <div class="loader" role="status" aria-live="polite">
+    <div class="loader__spinner" aria-hidden="true"></div>
     <span class="loader__text">{{ text }}</span>
   </div>
 </template>
@@ -45,6 +45,14 @@ withDefaults(defineProps<Props>(), {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

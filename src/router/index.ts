@@ -22,4 +22,14 @@ const router = createRouter({
   ],
 })
 
+router.afterEach((to) => {
+  const home = to.name === 'home'
+  document.title = home
+    ? 'Pokédex de Kanto | Explora 151 Pokémon y crea tu equipo'
+    : 'Mi equipo Pokémon | Pokédex de Kanto'
+  document
+    .querySelector('meta[name="robots"]')
+    ?.setAttribute('content', home ? 'index, follow' : 'noindex, follow')
+})
+
 export default router

@@ -1,171 +1,145 @@
-name: Deploy Frontend
+name: Deploy Pokedex
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, prod-lan, pokedex]
+    timeout-minutes: 20
     concurrency:
       group: deploy-${{ github.repository }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     env:
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      SSH_PORT: ${{ secrets.SSH_PORT }}
-      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      SSH_HOST: ${{ vars.SSH_HOST }}
+      SSH_USER: ${{ vars.SSH_USER }}
+      SSH_PORT: ${{ vars.SSH_PORT }}
+      SSH_KNOWN_HOSTS: ${{ vars.SSH_KNOWN_HOSTS }}
+      LOCAL_SSH_KEY: ${{ vars.LOCAL_SSH_KEY_PATH }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+      DEPLOY_PATH_PREFIX: ${{ vars.DEPLOY_PATH_PREFIX }}
+      PRODUCTION_URL: https://talana.stevenacz.com
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          node-version: 20
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Detect package manager
-        id: pm
-        run: |
-          if [ -f package-lock.json ]; then
-            echo "manager=npm" >> "$GITHUB_OUTPUT"
-          elif [ -f bun.lock ] || [ -f bun.lockb ]; then
-            echo "manager=bun" >> "$GITHUB_OUTPUT"
-          else
-            echo "No supported lockfile found (package-lock.json, bun.lock, bun.lockb)."
-            exit 1
-          fi
+          bun-version: 1.4.1
 
       - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Type-check and build site
+        run: bun run verify
+
+      - name: Validate deployment configuration
+        id: deploy_config
+        shell: bash
         run: |
-          if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-            npm ci
-          else
-            bun install --frozen-lockfile || bun install
+          ready=true
+
+          for variable in SSH_HOST SSH_USER SSH_KNOWN_HOSTS LOCAL_SSH_KEY DEPLOY_PATH DEPLOY_PATH_PREFIX; do
+            if [ -z "${!variable}" ]; then
+              echo "Missing repository variable: $variable"
+              ready=false
+            fi
+          done
+
+          if [ -n "$LOCAL_SSH_KEY" ] && [ ! -f "$LOCAL_SSH_KEY" ]; then
+            echo "Configured deploy key file is unavailable."
+            ready=false
           fi
 
-      - name: Format check (optional)
-        run: |
-          if node -e "const s=require('./package.json').scripts||{}; process.exit(s['format:check'] ? 0 : 1)"; then
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run format:check || echo "Format check failed, continuing deploy."
-            else
-              bun run format:check || echo "Format check failed, continuing deploy."
-            fi
-          else
-            echo "No format:check script found. Skipping."
-          fi
-
-      - name: Lint (optional)
-        run: |
-          if node -e "const s=require('./package.json').scripts||{}; process.exit(s.lint ? 0 : 1)"; then
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run lint || echo "Lint failed, continuing deploy."
-            else
-              bun run lint || echo "Lint failed, continuing deploy."
-            fi
-          else
-            echo "No lint script found. Skipping."
-          fi
-
-      - name: Typecheck (optional)
-        run: |
-          if node -e "const s=require('./package.json').scripts||{}; process.exit(s.typecheck ? 0 : 1)"; then
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run typecheck || echo "Typecheck failed, continuing deploy."
-            else
-              bun run typecheck || echo "Typecheck failed, continuing deploy."
-            fi
-          else
-            echo "No typecheck script found. Skipping."
-          fi
-
-      - name: Tests (optional)
-        run: |
-          if node -e "const s=require('./package.json').scripts||{}; process.exit(s['test:run'] ? 0 : 1)"; then
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run test:run
-            else
-              bun run test:run
-            fi
-          else
-            echo "No test:run script found. Skipping."
-          fi
-
-      - name: Build
-        id: build
-        run: |
-          if node -e "const s=require('./package.json').scripts||{}; process.exit(s.generate ? 0 : 1)"; then
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run generate
-            else
-              bun run generate
-            fi
-          else
-            if [ "${{ steps.pm.outputs.manager }}" = "npm" ]; then
-              npm run build
-            else
-              bun run build
-            fi
-          fi
-
-          if [ -f .output/public/public/index.html ]; then
-            echo "output_dir=.output/public/public" >> "$GITHUB_OUTPUT"
-          elif [ -f .output/public/index.html ] || [ -d .output/public/_nuxt ]; then
-            echo "output_dir=.output/public" >> "$GITHUB_OUTPUT"
-          elif [ -f dist/public/index.html ]; then
-            echo "output_dir=dist/public" >> "$GITHUB_OUTPUT"
-          elif [ -d dist ]; then
-            echo "output_dir=dist" >> "$GITHUB_OUTPUT"
-          else
-            echo "Build output not found (.output/public/public, .output/public, dist/public or dist)."
+          if [ -n "$SSH_PORT" ] && ! [[ "$SSH_PORT" =~ ^[0-9]+$ ]]; then
+            echo "SSH_PORT must be numeric."
             exit 1
           fi
 
-      - name: Validate deployment secrets
-        run: |
-          if [ -z "$SSH_HOST" ]; then
-            echo "Missing secret: SSH_HOST"
-            exit 1
-          fi
-          if [ -z "$SSH_USER" ]; then
-            echo "Missing secret: SSH_USER"
-            exit 1
-          fi
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "Missing secret: SSH_PRIVATE_KEY"
-            exit 1
-          fi
-          if [ -z "$DEPLOY_PATH" ]; then
-            echo "Missing secret: DEPLOY_PATH"
-            exit 1
-          fi
-          if [ "$DEPLOY_PATH" = "/" ]; then
-            echo "DEPLOY_PATH cannot be /."
-            exit 1
+          if [ -n "$DEPLOY_PATH" ]; then
+            case "$DEPLOY_PATH" in
+              /|*..*|*[!A-Za-z0-9_./-]*)
+                echo "DEPLOY_PATH is unsafe."
+                exit 1
+                ;;
+            esac
           fi
 
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          port="${SSH_PORT:-22}"
-          ssh-keyscan -H -p "$port" "$SSH_HOST" >> ~/.ssh/known_hosts
+          if [ -n "$DEPLOY_PATH" ] && [ -n "$DEPLOY_PATH_PREFIX" ]; then
+            case "$DEPLOY_PATH" in
+              "$DEPLOY_PATH_PREFIX"/*) : ;;
+              *)
+                echo "DEPLOY_PATH must be below DEPLOY_PATH_PREFIX."
+                exit 1
+                ;;
+            esac
+          fi
 
-      - name: Deploy to VPS via rsync
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare SSH
+        if: steps.deploy_config.outputs.ready == 'true'
+        shell: bash
+        run: |
+          install -d -m 700 ~/.ssh
+          install -m 600 "$LOCAL_SSH_KEY" ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy static output
+        if: steps.deploy_config.outputs.ready == 'true'
+        shell: bash
         run: |
           port="${SSH_PORT:-22}"
-          output_dir="${{ steps.build.outputs.output_dir }}"
-
-          ssh -i ~/.ssh/deploy_key -p "$port" "$SSH_USER@$SSH_HOST" "mkdir -p '$DEPLOY_PATH'"
-
-          rsync -avz --delete \
+          ssh -i ~/.ssh/deploy_key -p "$port" "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH' && find '$DEPLOY_PATH' -type d -name '.~tmp~' -prune -exec rm -rf {} +"
+          rsync -avz --delete --delete-delay --delay-updates \
+            --chmod=D755,F644 \
             -e "ssh -i ~/.ssh/deploy_key -p $port" \
-            "$output_dir/" \
+            dist/ \
             "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+
+      - name: Purge rsync partial dirs
+        if: always() && steps.deploy_config.outputs.ready == 'true'
+        shell: bash
+        run: |
+          port="${SSH_PORT:-22}"
+          ssh -i ~/.ssh/deploy_key -p "$port" "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH' && find '$DEPLOY_PATH' -type d -name '.~tmp~' -prune -exec rm -rf {} +"
+
+      - name: Validate deployed site
+        if: steps.deploy_config.outputs.ready == 'true'
+        shell: bash
+        run: |
+          curl -fsSL "$PRODUCTION_URL/" > "$RUNNER_TEMP/pokedex.html"
+          grep -q '<title>Pokédex de Kanto' "$RUNNER_TEMP/pokedex.html"
+          grep -q 'rel="canonical" href="https://talana.stevenacz.com/"' "$RUNNER_TEMP/pokedex.html"
+          grep -q 'application/ld+json' "$RUNNER_TEMP/pokedex.html"
+
+          curl -fsSL "$PRODUCTION_URL/robots.txt" > "$RUNNER_TEMP/pokedex-robots.txt"
+          sitemap_url=$(awk 'tolower($1) == "sitemap:" { print $2; exit }' "$RUNNER_TEMP/pokedex-robots.txt" | tr -d '\r')
+          test "$sitemap_url" = "$PRODUCTION_URL/sitemap.xml"
+
+          curl -fsSL "$sitemap_url" > "$RUNNER_TEMP/pokedex-sitemap.xml"
+          grep -q '<urlset' "$RUNNER_TEMP/pokedex-sitemap.xml"
+          grep -q 'talana.stevenacz.com' "$RUNNER_TEMP/pokedex-sitemap.xml"
+
+          curl -fsSL "$PRODUCTION_URL/og-image-20260905.png" -o "$RUNNER_TEMP/pokedex-og.png"
+          test -s "$RUNNER_TEMP/pokedex-og.png"
+          curl -fsSL "$PRODUCTION_URL/favicon.ico" -o "$RUNNER_TEMP/pokedex-favicon.svg"
+          test -s "$RUNNER_TEMP/pokedex-favicon.svg"
+
+          headers=$(curl -fsSIL "$PRODUCTION_URL/" | tr -d '\r')
+          grep -qi '^strict-transport-security:' <<< "$headers"
+          grep -qi '^x-content-type-options: nosniff' <<< "$headers"
+          grep -qi '^referrer-policy:' <<< "$headers"
+
+      - name: Deployment skipped
+        if: steps.deploy_config.outputs.ready != 'true'
+        run: echo "Build passed; configure the deployment repository variables to publish."

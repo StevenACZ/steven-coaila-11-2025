@@ -6,6 +6,7 @@ import TypeList from '@/components/pokemon/TypeList.vue'
 import StatsList from '@/components/pokemon/StatsList.vue'
 import CryButton from '@/components/pokemon/CryButton.vue'
 import EvolutionChain from '@/components/pokemon/EvolutionChain.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 
 const route = useRoute()
@@ -23,7 +24,11 @@ onMounted(loadPokemon)
   <div class="detail">
     <BaseLoader v-if="loading" text="Cargando Pokémon..." />
 
-    <div v-else-if="error" class="detail__error">{{ error }}</div>
+    <div v-else-if="error" class="detail__error">
+      <h1>No se pudo mostrar el Pokémon</h1>
+      <p role="alert">{{ error }}</p>
+      <BaseButton @click="loadPokemon">Reintentar</BaseButton>
+    </div>
 
     <template v-else-if="pokemon">
       <div class="detail__header">
@@ -60,7 +65,7 @@ onMounted(loadPokemon)
       </div>
 
       <div class="detail__section">
-        <h3 class="detail__section-title">Estadísticas</h3>
+        <h2 class="detail__section-title">Estadísticas</h2>
         <StatsList v-if="pokemon.stats" :stats="pokemon.stats" />
       </div>
 
@@ -89,6 +94,10 @@ onMounted(loadPokemon)
     padding: 48px;
     font-size: 1.25rem;
     color: $color-text-muted;
+  }
+
+  &__error p {
+    margin-block: 20px;
   }
 
   &__header {
@@ -215,6 +224,14 @@ onMounted(loadPokemon)
   &__footer {
     display: flex;
     justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

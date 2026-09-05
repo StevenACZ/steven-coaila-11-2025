@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 
 interface Props {
   url: string
@@ -11,40 +11,80 @@ const emit = defineEmits<{
 }>()
 
 const isPlaying = ref(false)
-const audio = ref<HTMLAudioElement | null>(null)
+const audioError = ref(false)
+let audio: HTMLAudioElement | null = null
 
 watch(isPlaying, (value) => emit('playing', value))
 
-function play() {
-  if (isPlaying.value) {
+async function play() {
+  if (audio) {
     stop()
     return
   }
 
-  audio.value = new Audio(props.url)
-  audio.value.volume = 0.2
-  audio.value.onended = () => (isPlaying.value = false)
-  audio.value.play()
-  isPlaying.value = true
+  audioError.value = false
+  const currentAudio = new Audio(props.url)
+  audio = currentAudio
+  currentAudio.volume = 0.2
+  currentAudio.onended = stop
+  currentAudio.onerror = () => {
+    if (audio !== currentAudio) return
+    stop()
+    audioError.value = true
+  }
+  try {
+    await currentAudio.play()
+    if (audio === currentAudio) isPlaying.value = true
+  } catch {
+    if (audio !== currentAudio) return
+    stop()
+    audioError.value = true
+  }
 }
 
 function stop() {
-  if (audio.value) {
-    audio.value.pause()
-    audio.value = null
+  if (audio) {
+    audio.onended = null
+    audio.onerror = null
+    audio.pause()
+    audio = null
   }
   isPlaying.value = false
 }
+
+watch(() => props.url, stop)
+onBeforeUnmount(stop)
 </script>
 
 <template>
-  <button class="cry-btn" :class="{ 'cry-btn--playing': isPlaying }" @click.stop="play">
-    {{ isPlaying ? '🔊' : '🔈' }} Cry
-  </button>
+  <div class="cry-control">
+    <button
+      type="button"
+      class="cry-btn"
+      :class="{ 'cry-btn--playing': isPlaying }"
+      :aria-label="isPlaying ? 'Detener sonido del Pokémon' : 'Escuchar sonido del Pokémon'"
+      @click.stop="play"
+    >
+      <span aria-hidden="true">{{ isPlaying ? '🔊' : '🔈' }}</span>
+      {{ isPlaying ? 'Detener' : 'Escuchar' }}
+    </button>
+    <span v-if="audioError" class="cry-error" role="status"
+      >No se pudo reproducir. Inténtalo de nuevo.</span
+    >
+  </div>
 </template>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/variables' as *;
+
+.cry-control {
+  display: grid;
+  gap: 8px;
+}
+.cry-error {
+  color: $color-text-muted;
+  font-size: 0.8rem;
+}
 
 .cry-btn {
   padding: 8px 16px;
@@ -65,6 +105,14 @@ function stop() {
     background: $color-primary;
     color: white;
     border-color: $color-primary;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

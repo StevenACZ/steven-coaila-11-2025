@@ -11,8 +11,8 @@ defineProps<Props>()
 
 <template>
   <div class="evolution">
-    <h3 class="evolution__title">Cadena de Evolución</h3>
-    <div class="evolution__chain">
+    <h2 class="evolution__title">Cadena de Evolución</h2>
+    <div class="evolution__chain" tabindex="0" role="region" aria-label="Cadena de evolución">
       <template v-for="(pokemon, index) in chain" :key="pokemon.id">
         <div
           class="evolution__pokemon"
@@ -21,7 +21,7 @@ defineProps<Props>()
           <img :src="pokemon.image" :alt="pokemon.name" class="evolution__image" loading="lazy" />
           <span class="evolution__name">{{ pokemon.name }}</span>
         </div>
-        <span v-if="index < chain.length - 1" class="evolution__arrow">→</span>
+        <span v-if="index < chain.length - 1" class="evolution__arrow" aria-hidden="true">→</span>
       </template>
     </div>
   </div>
@@ -114,6 +114,14 @@ defineProps<Props>()
     @include mobile {
       font-size: 1.25rem;
     }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

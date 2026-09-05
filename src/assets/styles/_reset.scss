@@ -16,7 +16,7 @@
   --color-surface: #ffffff;
   --color-secondary: #e2e8f0;
   --color-text: #1a202c;
-  --color-text-muted: #64748b;
+  --color-text-muted: #526177;
   --color-border: #cbd5e1;
 }
 
@@ -40,7 +40,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   font-weight: 500;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 h1,

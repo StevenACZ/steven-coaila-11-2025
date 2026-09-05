@@ -14,7 +14,11 @@ defineEmits<{
 </script>
 
 <template>
-  <div
+  <button
+    type="button"
+    :disabled="disabled"
+    :aria-pressed="selected ?? false"
+    :aria-label="`${pokemon.name}, número ${pokemon.id}`"
     class="card"
     :class="{
       'card--selected': selected,
@@ -22,11 +26,11 @@ defineEmits<{
     }"
     @click="$emit('click')"
   >
-    <div class="card__check" v-if="selected">✓</div>
-    <img :src="pokemon.image" :alt="pokemon.name" class="card__image" loading="lazy" />
+    <span class="card__check" v-if="selected" aria-hidden="true">✓</span>
+    <img :src="pokemon.image" alt="" class="card__image" loading="lazy" />
     <span class="card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
     <span class="card__name">{{ pokemon.name }}</span>
-  </div>
+  </button>
 </template>
 
 <style lang="scss" scoped>
@@ -34,6 +38,8 @@ defineEmits<{
 @use '@/assets/styles/mixins' as *;
 
 .card {
+  font: inherit;
+  width: 100%;
   background: $color-surface;
   border-radius: $radius-lg;
   padding: 16px;
@@ -128,6 +134,14 @@ defineEmits<{
     @include mobile {
       font-size: 0.8rem;
     }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

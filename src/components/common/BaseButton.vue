@@ -16,6 +16,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <button
+    type="button"
     class="btn"
     :class="[`btn--${variant}`, { 'btn--floating': floating }, { 'btn--desktop': desktopOnly }]"
     :disabled="disabled"
@@ -42,12 +43,12 @@ withDefaults(defineProps<Props>(), {
   white-space: nowrap;
 
   &--primary {
-    background: $color-primary;
+    background: #c92545;
     color: white;
     box-shadow: 0 0 15px rgba($color-primary, 0.4);
 
     &:hover:not(:disabled) {
-      background: #ff6b81;
+      background: #ae1b37;
       box-shadow: 0 0 25px rgba($color-primary, 0.6);
     }
 
@@ -90,6 +91,14 @@ withDefaults(defineProps<Props>(), {
         0 4px 20px rgba(0, 0, 0, 0.3),
         0 0 15px rgba($color-primary, 0.4);
     }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

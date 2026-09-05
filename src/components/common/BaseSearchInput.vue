@@ -2,10 +2,12 @@
 interface Props {
   modelValue: string
   placeholder?: string
+  label?: string
 }
 
 withDefaults(defineProps<Props>(), {
   placeholder: 'Buscar...',
+  label: 'Buscar Pokémon por nombre',
 })
 
 defineEmits<{
@@ -16,7 +18,8 @@ defineEmits<{
 <template>
   <div class="search">
     <input
-      type="text"
+      type="search"
+      :aria-label="label"
       class="search__input"
       :value="modelValue"
       :placeholder="placeholder"
@@ -49,6 +52,14 @@ defineEmits<{
       border-color: $color-primary;
       box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
     }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

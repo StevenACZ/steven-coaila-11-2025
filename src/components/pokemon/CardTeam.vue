@@ -19,8 +19,16 @@ const isCrying = ref(false)
 </script>
 
 <template>
-  <div class="team-card" @click="$emit('click')">
-    <button class="team-card__remove" @click.stop="$emit('remove')" title="Eliminar">✕</button>
+  <article class="team-card">
+    <button
+      type="button"
+      :aria-label="`Eliminar a ${pokemon.name} del equipo`"
+      class="team-card__remove"
+      @click.stop="$emit('remove')"
+      title="Eliminar"
+    >
+      ✕
+    </button>
 
     <div class="team-card__header">
       <img
@@ -32,7 +40,16 @@ const isCrying = ref(false)
       />
       <div class="team-card__info">
         <span class="team-card__id">#{{ String(pokemon.id).padStart(3, '0') }}</span>
-        <h3 class="team-card__name">{{ pokemon.name }}</h3>
+        <h2 class="team-card__name">
+          <button
+            type="button"
+            class="team-card__detail"
+            :aria-label="`Ver detalles de ${pokemon.name}`"
+            @click="$emit('click')"
+          >
+            {{ pokemon.name }}
+          </button>
+        </h2>
         <TypeList v-if="pokemon.types" :types="pokemon.types" />
       </div>
     </div>
@@ -44,7 +61,7 @@ const isCrying = ref(false)
     <div class="team-card__footer">
       <CryButton v-if="pokemon.cry" :url="pokemon.cry" @playing="isCrying = $event" />
     </div>
-  </div>
+  </article>
 </template>
 
 <style lang="scss" scoped>
@@ -55,7 +72,6 @@ const isCrying = ref(false)
   background: $color-surface;
   border-radius: $radius-lg;
   padding: 20px;
-  cursor: pointer;
   transition: $transition;
   position: relative;
   border: 2px solid transparent;
@@ -64,6 +80,21 @@ const isCrying = ref(false)
     transform: translateY(-4px);
     box-shadow: $shadow;
     border-color: $color-primary;
+  }
+
+  &__detail {
+    font: inherit;
+    color: inherit;
+    text-transform: inherit;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__remove {
@@ -143,6 +174,14 @@ const isCrying = ref(false)
   &__footer {
     display: flex;
     justify-content: flex-end;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

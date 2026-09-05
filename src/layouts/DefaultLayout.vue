@@ -4,8 +4,9 @@ import TheNavbar from '@/components/layout/TheNavbar.vue'
 
 <template>
   <div class="layout">
+    <a class="skip-link" href="#main-content">Ir al contenido</a>
     <TheNavbar />
-    <main class="layout__content">
+    <main id="main-content" class="layout__content">
       <slot />
     </main>
   </div>

@@ -1,10 +1,6 @@
 import api from '@/api'
-import type {
-  PokemonListResponse,
-  Pokemon,
-  PokemonDetailResponse,
-  EvolutionPokemon,
-} from '@/types/pokemon'
+import kanto from '@/data/kanto.json'
+import type { Pokemon, EvolutionPokemon } from '@/types/pokemon'
 
 function getPokemonImageUrl(id: number): string {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
@@ -12,45 +8,20 @@ function getPokemonImageUrl(id: number): string {
 
 export const pokemonService = {
   async getList(limit = 25, offset = 0): Promise<{ items: Pokemon[]; count: number }> {
-    const { data } = await api.get<PokemonListResponse>('/pokemon', {
-      params: { limit, offset },
-    })
-
-    const promises = data.results.map(async (item) => {
-      const { data: detail } = await api.get<PokemonDetailResponse>(item.url)
-
-      return {
-        id: detail.id,
-        name: detail.name,
-        image: getPokemonImageUrl(detail.id),
-        types: detail.types.map((t) => t.type.name),
-      }
-    })
-
-    const items = await Promise.all(promises)
-
+    if (!Number.isInteger(limit) || !Number.isInteger(offset) || limit < 0 || offset < 0)
+      throw new Error('Invalid catalog page')
     return {
-      items,
-      count: data.count,
+      items: kanto
+        .slice(offset, offset + limit)
+        .map((item) => ({ ...item, image: getPokemonImageUrl(item.id) })),
+      count: kanto.length,
     }
   },
 
   async getById(id: number): Promise<Pokemon> {
-    const { data } = await api.get<PokemonDetailResponse>(`/pokemon/${id}`)
-
-    return {
-      id: data.id,
-      name: data.name,
-      image: getPokemonImageUrl(data.id),
-      types: data.types.map((t) => t.type.name),
-      height: data.height,
-      weight: data.weight,
-      stats: data.stats.map((s) => ({
-        name: s.stat.name,
-        value: s.base_stat,
-      })),
-      cry: data.cries.latest,
-    }
+    const item = kanto.find((pokemon) => pokemon.id === id)
+    if (!item) throw new Error('Pokemon is outside the Kanto catalog')
+    return { ...item, image: getPokemonImageUrl(item.id) }
   },
 
   async getSpeciesData(

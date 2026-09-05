@@ -89,4 +89,9 @@ function getStatColor(value: number): string {
     text-align: right;
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .stats__fill {
+    transition: none;
+  }
+}
 </style>

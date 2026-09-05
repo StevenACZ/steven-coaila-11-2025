@@ -32,14 +32,17 @@ onMounted(loadTeam)
 
     <BaseLoader v-if="loading" text="Cargando equipo..." />
 
-    <div v-else-if="error" class="team__error">{{ error }}</div>
+    <div v-else-if="error" class="team__error">
+      <p role="alert">No se pudo cargar tu equipo. Vuelve a intentarlo.</p>
+      <BaseButton @click="loadTeam">Reintentar</BaseButton>
+    </div>
 
     <div v-else-if="isEmpty" class="team__empty">
       <p>No tienes Pokémon en tu equipo</p>
       <BaseButton @click="goToHome">Agregar Pokémon</BaseButton>
     </div>
 
-    <main v-else-if="hasTeam" class="team__grid">
+    <div v-else-if="hasTeam" class="team__grid">
       <CardTeam
         v-for="pokemon in pokemonList"
         :key="pokemon.id"
@@ -47,7 +50,7 @@ onMounted(loadTeam)
         @click="goToDetail(pokemon.id)"
         @remove="removePokemon(pokemon.id)"
       />
-    </main>
+    </div>
   </div>
 </template>
 
@@ -79,6 +82,10 @@ onMounted(loadTeam)
     padding: 48px;
     font-size: 1.25rem;
     color: $color-text-muted;
+  }
+
+  &__error p {
+    margin-bottom: 20px;
   }
 
   &__empty {

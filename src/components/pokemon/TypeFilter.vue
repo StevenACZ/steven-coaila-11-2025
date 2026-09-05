@@ -14,7 +14,7 @@ function toggleType(type: string) {
 </script>
 
 <template>
-  <div class="filter">
+  <div class="filter" role="group" aria-label="Filtrar Pokémon por tipo">
     <TypeBadge
       v-for="type in ALL_TYPES"
       :key="type"

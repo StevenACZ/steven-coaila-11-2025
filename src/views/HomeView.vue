@@ -7,6 +7,7 @@ import { useTeamStore } from '@/stores/teamStore'
 import CardHome from '@/components/pokemon/CardHome.vue'
 import TypeFilter from '@/components/pokemon/TypeFilter.vue'
 import BasePagination from '@/components/common/BasePagination.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 import BaseLoader from '@/components/common/BaseLoader.vue'
 import BaseSearchInput from '@/components/common/BaseSearchInput.vue'
 
@@ -35,21 +36,27 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 
 <template>
   <div class="home">
+    <h1 class="home__title">Pokédex de Kanto</h1>
+    <p class="home__intro">Explora los 151 Pokémon y elige hasta seis para tu equipo.</p>
     <div class="home__filters">
       <BaseSearchInput v-model="searchQuery" placeholder="Buscar Pokémon..." />
       <TypeFilter v-model:selected-types="selectedTypes" />
     </div>
 
     <BaseLoader v-if="loading" />
-    <div v-else-if="error" class="home__error">{{ error }}</div>
+    <div v-else-if="error" class="home__error">
+      <p role="alert">No se pudieron cargar los Pokémon. Vuelve a intentarlo.</p>
+      <BaseButton @click="fetchPokemon(TOTAL_POKEMON, 0)">Reintentar</BaseButton>
+    </div>
     <div
       v-else-if="(isSearching || isFiltering) && filteredPokemon.length === 0"
       class="home__empty"
+      role="status"
     >
       No se encontraron Pokémon
     </div>
 
-    <TransitionGroup v-else name="grid" tag="main" class="home__grid">
+    <TransitionGroup v-else name="grid" tag="div" class="home__grid">
       <CardHome
         v-for="pokemon in displayedPokemon"
         :key="pokemon.id"
@@ -61,7 +68,7 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
     </TransitionGroup>
 
     <BasePagination
-      v-if="!isSearching && !isFiltering && !loading"
+      v-if="!isSearching && !isFiltering && !loading && !error && totalPages > 1"
       :current-page="currentPage"
       :total-pages="totalPages"
       @update:current-page="goToPage"
@@ -80,6 +87,21 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 
   @include mobile {
     padding: 16px 16px 100px 16px;
+  }
+
+  &__title {
+    color: $color-text;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 12px;
+  }
+
+  &__intro {
+    color: $color-text-muted;
+    margin-bottom: 24px;
+  }
+
+  &__error p {
+    margin-bottom: 20px;
   }
 
   &__filters {
@@ -132,5 +154,13 @@ onMounted(() => fetchPokemon(TOTAL_POKEMON, 0))
 
 .grid-move {
   transition: transform 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 </style>

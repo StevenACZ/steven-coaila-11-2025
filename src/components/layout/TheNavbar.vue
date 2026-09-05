@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter, useRoute } from 'vue-router'
 import { useTheme } from '@/composables/useTheme'
@@ -16,6 +16,7 @@ const { teamSize } = storeToRefs(teamStore)
 const { maxTeamSize, clearTeam } = teamStore
 
 const showClearModal = ref(false)
+const homeButton = ref<HTMLButtonElement | null>(null)
 
 const isHome = () => route.path === '/'
 const isTeamList = () => route.path === '/team'
@@ -37,19 +38,23 @@ function goBack() {
   }
 }
 
-function handleClearTeam() {
+async function handleClearTeam() {
   clearTeam()
   showClearModal.value = false
+  await nextTick()
+  homeButton.value?.focus()
 }
 </script>
 
 <template>
-  <nav class="navbar">
+  <nav class="navbar" aria-label="Navegación principal">
     <div class="navbar__container">
-      <button class="navbar__logo" @click="goHome">Pokédex</button>
+      <button type="button" ref="homeButton" class="navbar__logo" @click="goHome">Pokédex</button>
 
       <div class="navbar__actions">
         <button
+          type="button"
+          :aria-label="isDark ? 'Activar modo día' : 'Activar modo noche'"
           class="navbar__theme"
           @click="toggleTheme"
           :title="isDark ? 'Modo día' : 'Modo noche'"
@@ -59,6 +64,8 @@ function handleClearTeam() {
 
         <button
           v-if="isHome() && teamSize > 0"
+          type="button"
+          aria-label="Reiniciar equipo"
           class="navbar__reset"
           @click="showClearModal = true"
           title="Reiniciar equipo"
@@ -66,7 +73,12 @@ function handleClearTeam() {
           🗑️
         </button>
 
-        <span class="navbar__counter">{{ teamSize }}/{{ maxTeamSize }}</span>
+        <span
+          class="navbar__counter"
+          role="status"
+          :aria-label="`${teamSize} de ${maxTeamSize} Pokémon en el equipo`"
+          >{{ teamSize }}/{{ maxTeamSize }}</span
+        >
 
         <BaseButton v-if="isHome()" :disabled="teamSize === 0" @click="goToTeam" desktop-only>
           Ver Equipo →
@@ -198,6 +210,14 @@ function handleClearTeam() {
     @include mobile {
       font-size: 0.9rem;
     }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

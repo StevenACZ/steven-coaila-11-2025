@@ -22,10 +22,21 @@ function goToPage(page: number) {
 </script>
 
 <template>
-  <footer class="pagination">
-    <button class="page-btn" :disabled="isFirstPage" @click="goToPage(currentPage - 1)">←</button>
+  <nav class="pagination" aria-label="Páginas de Pokémon">
+    <button
+      type="button"
+      aria-label="Página anterior"
+      class="page-btn"
+      :disabled="isFirstPage"
+      @click="goToPage(currentPage - 1)"
+    >
+      ←
+    </button>
 
     <button
+      type="button"
+      :aria-label="`Página ${page}`"
+      :aria-current="page === currentPage ? 'page' : undefined"
       v-for="page in totalPages"
       :key="page"
       class="page-btn"
@@ -35,8 +46,16 @@ function goToPage(page: number) {
       {{ page }}
     </button>
 
-    <button class="page-btn" :disabled="isLastPage" @click="goToPage(currentPage + 1)">→</button>
-  </footer>
+    <button
+      type="button"
+      aria-label="Página siguiente"
+      class="page-btn"
+      :disabled="isLastPage"
+      @click="goToPage(currentPage + 1)"
+    >
+      →
+    </button>
+  </nav>
 </template>
 
 <style lang="scss" scoped>
@@ -93,6 +112,14 @@ function goToPage(page: number) {
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

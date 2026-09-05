@@ -1,19 +1,79 @@
 <!doctype html>
-<html lang="">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokedex</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
+    <title>Pokédex de Kanto | Explora 151 Pokémon y crea tu equipo</title>
+    <meta
+      name="description"
+      content="Explora los 151 Pokémon de Kanto, filtra por tipo, consulta estadísticas y crea un equipo de hasta seis. Pokédex gratuita con datos de PokéAPI."
     />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#1a1a2e" />
+    <link rel="canonical" href="https://talana.stevenacz.com/" />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="preload"
+      href="/fonts/rajdhani-latin-500-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/orbitron-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content="Pokédex de Kanto | Explora 151 Pokémon y crea tu equipo" />
+    <meta
+      property="og:description"
+      content="Explora los 151 Pokémon de Kanto, filtra por tipo, consulta estadísticas y crea un equipo de hasta seis. Pokédex gratuita con datos de PokéAPI."
+    />
+    <meta property="og:url" content="https://talana.stevenacz.com/" />
+    <meta property="og:image" content="https://talana.stevenacz.com/og-image-20260905.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Pokédex de Kanto: 151 Pokémon, filtros por tipo y equipo de seis"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://raw.githubusercontent.com; font-src 'self'; connect-src 'self' https://pokeapi.co; media-src https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Pokédex de Kanto",
+        "url": "https://talana.stevenacz.com/",
+        "description": "Explora los 151 Pokémon de Kanto, filtra por tipo, consulta estadísticas y crea un equipo de hasta seis. Pokédex gratuita con datos de PokéAPI.",
+        "applicationCategory": "ReferenceApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "es",
+        "isAccessibleForFree": true
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <noscript
+      ><main>
+        <h1>Pokédex de Kanto</h1>
+        <p>
+          Explora los 151 Pokémon de Kanto, filtra por tipo, consulta estadísticas y crea un equipo
+          de hasta seis. Pokédex gratuita con datos de PokéAPI.
+        </p>
+        <p>Activa JavaScript para buscar Pokémon y guardar tu equipo en este navegador.</p>
+        <p>Proyecto personal no oficial. Pokémon pertenece a sus respectivos propietarios.</p>
+        <a href="https://pokeapi.co/">Datos de PokéAPI</a>
+      </main></noscript
+    >
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
