@@ -11,3 +11,5 @@ Public personal demo at https://talana.stevenacz.com/; source is StevenACZ/steve
 - Do not commit credentials, caches, generated dist output, private infrastructure paths or raw API dumps.
 - Run bun run format and bun run verify before Git/deploy. Check native Chrome selection/filter/detail/remove/modal flows and mobile layout after interface changes.
 - Keep README and CHANGELOG accurate. No invented license, ratings or performance scores.
+
+- Main is protected. Open a pull request with passing checks instead of relying on owner bypass for direct pushes. Pull-request verification runs on GitHub-hosted runners; deploy jobs run only from trusted main.
